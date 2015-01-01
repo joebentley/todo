@@ -48,12 +48,12 @@ class List:
 
     @staticmethod
     def get_all(cursor):
-        """ Return a list of items parsed from the database.
+        """ Return a List of items parsed from the database.
 
             Keyword arguments:
             cursor -- current sqlite3 database connection cursor """
         # grab the entire table and parse each element
         cursor.execute('SELECT * FROM items')
         raw = cursor.fetchall()
-        return list(map(lambda tup: Item.from_tuple(tup), raw))
+        return List(list(map(lambda tup: Item.from_tuple(tup), raw)))
 
