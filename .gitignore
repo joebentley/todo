@@ -1,0 +1,8 @@
+.DS_Store
+.Trash
+
+*.pyc
+
+log
+
+test.db
