@@ -3,8 +3,8 @@ from item import Item
 
 class List:
     """ Todo list, containing the current list of items. """
-    def __init__(self, items=[]):
-        self.items = items
+    def __init__(self, items=None):
+        self.items = items or []
 
     def __str__(self):
         res = ''
@@ -17,6 +17,23 @@ class List:
 
     def __len__(self):
         return len(self.items)
+
+    def __eq__(self, other):
+        if len(self) != len(other):
+            return False
+
+        for tup in zip(self, other):
+            if tup[0] != tup[1]:
+                return False
+
+        return True
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def add(self, item):
+        """ Add item to the list. """
+        self.items.append(item)
 
     def clear(self, cursor):
         """ Delete all items from the database. """
@@ -44,7 +61,7 @@ class List:
             raise
 
         self.items.remove(deleted)
-        deleted.remove(cursor)
+        deleted.delete(cursor)
         return True
 
     def next_id(self):
@@ -53,10 +70,6 @@ class List:
             return max(self.items, key=lambda x: x.id).id + 1
         else:
             return 0
-
-    def add(self, item):
-        """ Add item to the list. """
-        self.items.append(item)
 
     @staticmethod
     def get_all(cursor):

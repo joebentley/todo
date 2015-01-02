@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-from app import App
+from app.app import App
 
 app = App()
 app.run()

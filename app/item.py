@@ -20,6 +20,18 @@ class Item:
 
         return result
 
+    def __eq__(self, other):
+        if (self.id != other.id or self.content != other.content or
+            self.date_created != other.date_created or
+            self.checked != other.checked):
+
+            return False
+
+        return True
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def check(self, cursor):
         """ Check off the todo list item in the database.
 
@@ -29,7 +41,7 @@ class Item:
         cursor.execute("""UPDATE items SET checked = '1'
                           WHERE id = ?""", (self.id,))
 
-    def remove(self, cursor):
+    def delete(self, cursor):
         """ Remove the todo list item from the database.
 
             Keyword arguments:
