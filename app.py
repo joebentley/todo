@@ -1,12 +1,18 @@
-import curses, sqlite3
+import curses, sqlite3, sys, os
 
+import commands
 from list import List
 from item import Item
 
 class App:
     """ Main app process class. """
     def __init__(self):
-        self.conn = sqlite3.connect('test.db')
+        if len(sys.argv) > 1:
+            path = sys.argv[1]
+        else:
+            path = os.path.expanduser("~/.todo.db")
+
+        self.conn = sqlite3.connect(path)
         self.cursor = self.conn.cursor()
 
         # create table if it doesn't exist
@@ -17,6 +23,10 @@ class App:
         self.win = curses.initscr()
 
         self.list = List.get_all(cursor=self.cursor)
+
+        self.commands = {":c": commands.check,
+                         ":d": commands.delete,
+                         ":clear": commands.clear }
 
     def run(self):
         """ Runs app in infinite loop until exited by user. """
@@ -60,46 +70,11 @@ class App:
         if input_str.startswith(":q"):
             return 'quit'
 
-        if input_str.startswith(":c"):
-            input = input_str.split()
-            if len(input) > 1:
-                itemid = input[1]
-                try:
-                    self.list.get_item(int(itemid)).check(self.cursor)
-                except IndexError:
-                    self.error("Please enter a valid item id")
-                    return
-                self.conn.commit()
-
-        if input_str.startswith(":d"):
-            input = input_str.split()
-            if len(input) > 1:
-                itemid = input[1]
-                try:
-                    self.list.remove_item(int(itemid), self.cursor)
-                except IndexError:
-                    self.error("Please enter a valid item id")
-                    return
-                self.conn.commit()
-
-        if input_str == ":clear":
-            self.win.move(1, 0)
-            message = "Are you sure you want to delete all items? "
-            self.win.addstr(message)
-
-            input = self.win.getstr().lower()
-            while input != "yes":
-                if input == "no":
-                    return
-                # user didn't input a valid option (neither "yes" nor "no")
-                self.win.move(2, 0)
-                self.win.addstr("Please enter yes or no")
-                # move cursor to end of line
-                self.win.move(1, len(message))
-
-                input = self.win.getstr().lower()
-
-            self.list.clear(self.cursor)
+        # get command that corresponds to user input and execute it
+        for command, func in self.commands.iteritems():
+            if input_str.startswith(command):
+                func(app=self, input_str=input_str)
+                return
 
     def error(self, message):
         """ Display error message on to screen and wait for the user
