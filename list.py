@@ -18,6 +18,15 @@ class List:
     def __len__(self):
         return len(self.items)
 
+    def clear(self, cursor):
+        """ Delete all items from the database. """
+        self.items = []
+        cursor.execute("DROP TABLE items")
+        # recreate table
+        cursor.execute("""CREATE TABLE items
+                          (id PRIMARY KEY, content TEXT,
+                           checked TEXT, date_created TEXT)""")
+
     def get_item(self, itemid):
         """ Return the item with id given by itemid raising
             IndexError if item not found. """
@@ -40,7 +49,10 @@ class List:
 
     def next_id(self):
         """ Return the id of the next element. """
-        return max(self.items, key=lambda x: x.id).id + 1
+        if len(self.items) > 0:
+            return max(self.items, key=lambda x: x.id).id + 1
+        else:
+            return 0
 
     def add(self, item):
         """ Add item to the list. """

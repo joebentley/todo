@@ -82,6 +82,24 @@ class App:
                     return
                 self.conn.commit()
 
+        if input_str == ":clear":
+            self.win.move(1, 0)
+            message = "Are you sure you want to delete all items? "
+            self.win.addstr(message)
+
+            input = self.win.getstr().lower()
+            while input != "yes":
+                if input == "no":
+                    return
+                # user didn't input a valid option (neither "yes" nor "no")
+                self.win.move(2, 0)
+                self.win.addstr("Please enter yes or no")
+                # move cursor to end of line
+                self.win.move(1, len(message))
+
+                input = self.win.getstr().lower()
+
+            self.list.clear(self.cursor)
 
     def error(self, message):
         """ Display error message on to screen and wait for the user
