@@ -4,5 +4,5 @@
 *.pyc
 
 log
-
-test.db
+build
+MANIFEST
