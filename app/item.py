@@ -13,7 +13,7 @@ class Item:
     def __str__(self):
         result = '{0:3d} - {1} - {2}'.format(self.id,
                 self.date_created.strftime('%m-%d %H:%M:%S'),
-                self.content)
+                self.content).strip()
 
         if self.checked:
             result += ' [CHECKED]'
