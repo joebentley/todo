@@ -22,7 +22,7 @@ def delete(app, input_str):
     """ Parse the input string and delete the item given in it by ID.
 
         Example:
-        (input_str = ":c 3") will check the item with ID 3.
+        (input_str = ":d 3") will delete the item with ID 3.
 
         Keyword arguments:
         app -- The current app object that this was called from (self)

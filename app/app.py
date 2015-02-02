@@ -6,7 +6,7 @@ from item import Item
 
 class App(object):
     """ Main command-line app process class. """
-    def __init__(self):
+    def __init__(self, path=None):
         # setup and parse command line args
         parser = argparse.ArgumentParser(description="""
             Todo list application.""")
@@ -21,7 +21,7 @@ class App(object):
         self.args = parser.parse_args()
 
         # get path (if given) and connect to it
-        path = self.args.f or os.path.expanduser("~/.todo.db")
+        path = path or self.args.f or os.path.expanduser("~/.todo.db")
         self.conn = sqlite3.connect(path)
         self.cursor = self.conn.cursor()
 
@@ -32,11 +32,12 @@ class App(object):
 
         self.list = List.get_all(cursor=self.cursor)
 
-        self.commands = {"c": commands.check,
-                         "d": commands.delete,
-                         "clear": commands.clear }
-
-
     def run(self):
-        print str(self.list),
+        if self.args.c:
+            commands.check(app=self, input_str=":c {0}".format(self.args.c))
+        if self.args.d:
+            commands.delete(app=self, input_str=":d {0}".format(self.args.d))
+        if self.args.clear:
+            commands.clear(app=self)
 
+        print str(self.list),

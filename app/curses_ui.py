@@ -1,6 +1,6 @@
 import curses
 
-import app
+import app, commands
 from list import List
 from item import Item
 
@@ -10,6 +10,10 @@ class CursesUI(app.App):
         super(CursesUI, self).__init__(path)
 
         self.win = curses.initscr()
+
+        self.commands = {"c": commands.check,
+                         "d": commands.delete,
+                         "clear": commands.clear }
 
     def run(self):
         """ Runs app in infinite loop until exited by user. """
